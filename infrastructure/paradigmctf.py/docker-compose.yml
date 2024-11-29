@@ -27,6 +27,8 @@ services:
       - BACKEND=docker
       - DATABASE=redis
       - REDIS_URL=redis://database:6379/0
+      - ENV=prod
+      - TEAM_MANAGER=http://easy-ticket:7766
     networks:
       - ctf_network
     depends_on:
@@ -39,6 +41,21 @@ services:
     command: uvicorn ctf_server:anvil_proxy --host 0.0.0.0 --port 8545
     ports:
       - "8545:8545"
+    environment:
+      - DATABASE=redis
+      - REDIS_URL=redis://database:6379/0
+    networks:
+      - ctf_network
+    depends_on:
+      - database
+
+  ctf-server-easy-ticket:
+    container_name: easy-ticket
+    image: ghcr.io/fuzzland/blaz-ctf-2024-server:latest
+    build: .
+    command: uvicorn ctf_server:easy_ticket --host 0.0.0.0 --port 7766
+    ports:
+      - "7766:7766"
     environment:
       - DATABASE=redis
       - REDIS_URL=redis://database:6379/0
