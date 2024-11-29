@@ -56,17 +56,18 @@ class RedisDatabase(Database):
             pipeline.execute()
 
     def get_instance(self, instance_id: str) -> Optional[UserData]:
-        instance: Optional[UserData] = self.__client.json().get(f"instance/{instance_id}")
+        instance: Optional[UserData] = self.__client.json().get(
+            f"instance/{instance_id}"
+        )
         if instance is None:
             return None
 
-        instance['metadata'] = {}
+        instance["metadata"] = {}
         metadata = self.__client.hgetall(f"metadata/{instance_id}")
         if metadata is not None:
-            instance['metadata'] = metadata
+            instance["metadata"] = metadata
 
         return instance
-
 
     def get_instance_by_external_id(self, rpc_id: str) -> Optional[UserData]:
         instance_id = self.__client.hget("external_ids", rpc_id)
