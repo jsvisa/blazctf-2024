@@ -71,7 +71,7 @@ for i, chal in enumerate(dirs):
         and os.path.exists(f"{chal}/challenge.yaml")
         and os.path.exists(f"{chal}/challenge/Dockerfile.local")
     ):
-        print("Found challenge: '%s' with port: %d", chal, port)
+        print(f"Found challenge: '{chal}' with port: {port}")
         service = TEMP.format(chal=chal, port=port, PUBLIC_IP=PUBLIC_IP)
         chals[chal] = yaml.safe_load(service)
         port += 1
@@ -84,7 +84,7 @@ compose = {
     },
 }
 
-print("Found %d challenges", len(chals))
+print(f"Found {len(chals)} challenges")
 print("Writing docker-compose.yml")
 with open("docker-compose.yml", "w") as f:
     yaml.dump(compose, f, sort_keys=False)
