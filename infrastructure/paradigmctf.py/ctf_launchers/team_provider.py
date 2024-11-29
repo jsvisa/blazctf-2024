@@ -7,6 +7,7 @@ import requests
 
 TEAM_MANAGER = os.getenv("TEAM_MANAGER", "http://tema-manager")
 
+
 class TeamProvider(abc.ABC):
     @abc.abstractmethod
     def get_team(self) -> Optional[str]:
@@ -30,10 +31,10 @@ class TicketTeamProvider(TeamProvider):
 
         return "team-" + team_id
 
-    def __check_ticket(self, ticket: str) -> bool:
+    def __check_ticket(self, ticket: str) -> Optional[str]:
         ticket_info = requests.post(
             f"{TEAM_MANAGER}/api/internal/check-ticket",
-            json={"ticket": ticket},
+            json={"ticket": ticket, "challenge_id": self.__challenge_id},
         ).json()
 
         if not ticket_info["ok"]:
