@@ -1,11 +1,20 @@
 import abc
 import os
+import random
+import string
 from dataclasses import dataclass
 from typing import Optional
-
 import requests
 
-TEAM_MANAGER = os.getenv("TEAM_MANAGER", "http://tema-manager")
+
+RANDOM_TICKET = os.getenv("RANDOM_TICKET", "true") == "true"
+TEAM_MANAGER = os.getenv("TEAM_MANAGER", "http://team-manager")
+
+
+def generate_random_ticket(length=40):
+    characters = string.ascii_letters + string.digits
+    random_string = "".join(random.choice(characters) for _ in range(length))
+    return random_string
 
 
 class TeamProvider(abc.ABC):
@@ -23,7 +32,22 @@ class TicketTeamProvider(TeamProvider):
         self.__challenge_id = challenge_id
 
     def get_team(self):
-        ticket_value = input("ticket? ").strip()
+        if RANDOM_TICKET:
+            print("1. Get a new ticket")
+            print("2. Use an existing ticket")
+            try:
+                choice = int(input("action? "))
+                assert choice in [1, 2]
+            except:
+                print("can you not")
+                return None
+            if choice == 1:
+                ticket_value = generate_random_ticket()
+                print(f"Your ticket is: {ticket_value} (keep it safe!)")
+            else:
+                ticket_value = input("ticket? ").strip()
+        else:
+            ticket_value = input("ticket? ").strip()
         team_id = self.__check_ticket(ticket_value)
         if not team_id:
             print("invalid ticket!")
